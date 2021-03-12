@@ -69,4 +69,22 @@ class Helpers {
         
         return trim( $token );
     }
+
+    /**
+     * Get Private Salt.
+     * 
+     * @since  1.0.0
+     * @access public
+     *
+     * @return string
+     */
+    public static function get_private_salt() {
+        $salt = give_get_option( 'instamojo_get_live_salt' );
+
+        if ( give_is_test_mode() ) {
+            $salt = give_get_option( 'instamojo_get_test_salt' );
+        }
+        
+        return trim( $salt );
+    }
 }
