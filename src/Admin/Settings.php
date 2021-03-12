@@ -3,7 +3,7 @@
  * Instamojo for Give | Admin Settings.
  *
  * @package WordPress
- * @subpackage Mastercard for Give
+ * @subpackage Instamojo for Give
  * @since 1.0.0
  */
 
