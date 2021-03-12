@@ -48,6 +48,7 @@ final class Plugin {
 		if ( is_admin() ) {
 			new Admin\Actions();
 			new Admin\Filters();
+			new Admin\Settings();
 		}
 
 		// Load Frontend Files.
