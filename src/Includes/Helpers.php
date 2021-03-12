@@ -87,4 +87,19 @@ class Helpers {
         
         return trim( $salt );
     }
+
+    /**
+     * Get Headers.
+     * 
+     * @since  1.0.0
+     * @access public
+     *
+     * @return array
+     */
+    public static function get_headers() {
+        return [
+            'X-Api-Key'    => self::get_private_api_key(),
+            'X-Auth-Token' => self::get_private_auth_token(),
+        ];
+    }
 }
