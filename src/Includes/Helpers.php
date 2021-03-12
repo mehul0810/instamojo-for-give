@@ -51,4 +51,22 @@ class Helpers {
         
         return trim( $key );
     }
+
+    /**
+     * Get Private Auth Token.
+     * 
+     * @since  1.0.0
+     * @access public
+     *
+     * @return string
+     */
+    public static function get_private_auth_token() {
+        $token = give_get_option( 'instamojo_get_live_auth_token' );
+
+        if ( give_is_test_mode() ) {
+            $token = give_get_option( 'instamojo_get_test_auth_token' );
+        }
+        
+        return trim( $token );
+    }
 }
