@@ -29,6 +29,7 @@ class Actions {
         add_action( 'give_donation_form_after_email', [ $this, 'add_phone_field' ] );
         add_filter( 'give_donation_form_required_fields', [ $this, 'require_phone_field' ], 10, 2 );
         add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ] );
+        add_action( 'init', [ $this, 'listen_to_response' ] );
     }
 
     /**
@@ -99,7 +100,12 @@ class Actions {
                 'buyer_name'   => $donorName,
                 'email'        => $donorEmail,
                 'phone'        => $donorPhone,
-                'redirect_url' => give_get_success_page_uri(),
+                'redirect_url' => add_query_arg(
+                    [
+                        'listener' => 'instamojo_checkout',
+                    ],
+                    give_get_success_page_uri()
+                ),
             ];
             
             $response      = Instamojo::create_payment_request( $args );
@@ -197,5 +203,39 @@ class Actions {
         }
 
         wp_enqueue_script( 'instamojo-checkout', 'https://js.instamojo.com/v1/checkout.js', '', INSTAMOJO_FOR_GIVE_VERSION );
+    }
+
+    /**
+     * Listen to response.
+     * 
+     * @since  1.0.0
+     * @access public
+     *
+     * @return void
+     */
+    public function listen_to_response() {
+        $get_data = give_clean( $_GET );
+
+        // Bailout, if the listener is not from Instamojo Checkout.
+        if ( 'instamojo_checkout' !== $get_data['listener'] ) {
+            return;
+        }
+
+        $payment_request_id = $get_data['payment_request_id'];
+        $payment_id         = $get_data['payment_id'];
+        $donation_id        = Helpers::get_donation_id_by_meta( 'instamojo_for_give_payment_request_id', $payment_request_id );
+        
+        $response      = Instamojo::get_payment_details( $payment_request_id, $payment_id );
+        $response_body = json_decode( wp_remote_retrieve_body( $response ) );
+        $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
+
+        if ( 200 === $response_code && 'Completed' === $response_body->payment_request->status ) {
+            give_update_payment_status( $donation_id, 'publish' );
+            give_set_payment_transaction_id( $donation_id, $payment_id );
+            give_send_to_success_page();
+        } else {
+            give_update_payment_status( $donation_id, 'failed' );
+            wp_redirect( give_get_failed_transaction_uri() );
+        }
     }
 }
