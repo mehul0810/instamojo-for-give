@@ -28,6 +28,7 @@ class Actions {
 		add_action( 'give_instamojo_checkout_cc_form', '__return_false' );
         add_action( 'give_donation_form_after_email', [ $this, 'add_phone_field' ] );
         add_filter( 'give_donation_form_required_fields', [ $this, 'require_phone_field' ], 10, 2 );
+        add_action( 'wp_enqueue_scripts', [ $this, 'register_assets' ] );
     }
 
     /**
@@ -98,19 +99,23 @@ class Actions {
                 'buyer_name'   => $donorName,
                 'email'        => $donorEmail,
                 'phone'        => $donorPhone,
+                'redirect_url' => give_get_success_page_uri(),
             ];
             
             $response      = Instamojo::create_payment_request( $args );
-            $response_body = wp_remote_retrieve_body( $response );
-            $response_code = wp_remote_retrieve_response_code( $response );
+            $response_body = json_decode( wp_remote_retrieve_body( $response ) );
+            $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
             
-            if ( 200 === $response_code ) {
-                echo '<pre>'; print_r($response_body); echo '</pre>';
+            if ( 201 === $response_code && $response_body->success ) {
+                give_update_meta( $donation_id, 'instamojo_for_give_payment_request_id', $response_body->payment_request->id );
+                
+                // Send donor to Instamojo Checkout page.
+                wp_redirect( $response_body->payment_request->longurl ); 
             } else {
-                echo '<pre>'; print_r(json_decode($response_body)); echo '</pre>';
+                echo '<pre>'; print_r($response); echo '</pre>';
                 // give_set_error();
             }
-            die();
+            // die();
         }
 
     }
@@ -120,7 +125,7 @@ class Actions {
 	 *
 	 * @param int $form_id Donation Form ID.
 	 *
-	 * @since  1.0.2
+	 * @since  1.0.0
 	 * @access public
 	 *
 	 * @return void
@@ -175,5 +180,22 @@ class Actions {
         ];
 
         return $required_fields;
+    }
+
+    /**
+     * Register Assets.
+     * 
+     * @since  1.0.0
+     * @access public
+     *
+     * @return void
+     */
+    public function register_assets() {
+        // Bailout, if the `Instamojo Checkout` gateway is not active.
+        if ( ! give_is_gateway_active( 'instamojo_checkout' ) ) {
+            return;
+        }
+
+        wp_enqueue_script( 'instamojo-checkout', 'https://js.instamojo.com/v1/checkout.js', '', INSTAMOJO_FOR_GIVE_VERSION );
     }
 }
