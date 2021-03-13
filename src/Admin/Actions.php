@@ -22,6 +22,30 @@ class Actions {
      * @access public
      */
     public function __construct() {
-        
+        add_action( 'give_payment_view_details', [ $this, 'show_phone_field' ] );
     }
+
+    /**
+	 * Show Phone Field under Donation Details.
+	 *
+	 * @param int $donationId Donation ID.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 *
+	 * @return mixed
+	 */
+	public function show_phone_field( $donationId ) {
+		$phone = give_get_meta( $donationId, 'instamojo_for_give_phone', true );
+		?>
+		<div class="column">
+			<p>
+				<strong>
+					<?php _e( 'Phone:', 'instamojo-for-give' ); ?>
+				</strong><br/>
+				<?php echo ! empty( $phone ) ? $phone : esc_html__( 'N/A', 'instamojo-for-give' ); ?>
+			</p>
+		</div>
+		<?php
+	}
 }
