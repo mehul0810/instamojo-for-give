@@ -1,180 +1,158 @@
-# Copyright (C) 2021 Mehul Gohil
-# This file is distributed under the same license as the Instamojo for Give plugin.
+# Copyright (C) 2021 Instamojo for Give
+# This file is distributed under the same license as the Instamojo for Give package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Instamojo for Give 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/instamojo-for-give\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Project-Id-Version: Instamojo for Give\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-06-10T19:08:13+00:00\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.4.0\n"
-"X-Domain: instamojo-for-give\n"
+"Language-Team: Mehul Gohil <hello@mehulgohil.com>\n"
+"Last-Translator: Mehul Gohil <hello@mehulgohil.com>\n"
+"Report-Msgid-Bugs-To: https://github.com/mehul0810/instamojo-for-give\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: __;_e;_ex:1,2c;_n:1,2;_n_noop:1,2;_nx:1,2,4c;_nx_noop:1,2,3c;_x:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#. Plugin Name of the plugin
-msgid "Instamojo for Give"
-msgstr ""
-
-#. Plugin URI of the plugin
-msgid "https://wordpress.org/plugins/instamojo-for-give"
-msgstr ""
-
-#. Description of the plugin
-msgid "Accept donations via Instamojo payment gateway using GiveWP."
-msgstr ""
-
-#. Author of the plugin
-msgid "Mehul Gohil"
-msgstr ""
-
-#. Author URI of the plugin
-msgid "https://mehulgohil.com"
-msgstr ""
-
-#: src/Admin/Actions.php:44
+#: ../src/Admin/Actions.php:44
 msgid "Phone:"
 msgstr ""
 
-#: src/Admin/Actions.php:46
+#: ../src/Admin/Actions.php:46
 msgid "N/A"
 msgstr ""
 
-#: src/Admin/Filters.php:42
+#: ../src/Admin/Filters.php:42
 msgid "Settings"
 msgstr ""
 
-#: src/Admin/Filters.php:47
+#: ../src/Admin/Filters.php:47
 msgid "Support"
 msgstr ""
 
-#: src/Admin/Settings.php:81
-#: src/Includes/Filters.php:41
+#: ../src/Admin/Settings.php:81, ../src/Includes/Filters.php:41
 msgid "Instamojo"
 msgstr ""
 
-#: src/Admin/Settings.php:109
+#: ../src/Admin/Settings.php:109
 msgid "Need Help?"
 msgstr ""
 
-#: src/Admin/Settings.php:114
+#: ../src/Admin/Settings.php:114
 msgid "Don't have an Instamojo Account?"
 msgstr ""
 
-#: src/Admin/Settings.php:116
-#: src/Admin/Settings.php:130
+#: ../src/Admin/Settings.php:116, ../src/Admin/Settings.php:130
 msgid "Click here"
 msgstr ""
 
-#: src/Admin/Settings.php:117
+#: ../src/Admin/Settings.php:117
 msgid "to create one."
 msgstr ""
 
-#: src/Admin/Settings.php:121
+#: ../src/Admin/Settings.php:121
 msgid "Existing Instamojo Customer?"
 msgstr ""
 
-#: src/Admin/Settings.php:123
+#: ../src/Admin/Settings.php:123
 msgid "Email me"
 msgstr ""
 
-#: src/Admin/Settings.php:124
+#: ../src/Admin/Settings.php:124
 msgid "the email address of your Instmojo account for additional Instamojo account related help."
 msgstr ""
 
-#: src/Admin/Settings.php:128
+#: ../src/Admin/Settings.php:128
 msgid "Facing an issue with the plugin?"
 msgstr ""
 
-#: src/Admin/Settings.php:131
+#: ../src/Admin/Settings.php:131
 msgid "to create a ticket on WordPress support forums."
 msgstr ""
 
-#: src/Admin/Settings.php:136
+#: ../src/Admin/Settings.php:136
 msgid "Live - Private API Key"
 msgstr ""
 
-#: src/Admin/Settings.php:137
+#: ../src/Admin/Settings.php:137
 msgid "Please enter the private API key from your LIVE Instamojo Account."
 msgstr ""
 
-#: src/Admin/Settings.php:143
+#: ../src/Admin/Settings.php:143
 msgid "Live - Private Auth Token"
 msgstr ""
 
-#: src/Admin/Settings.php:144
+#: ../src/Admin/Settings.php:144
 msgid "Please enter the private Authentication Token from your LIVE Instamojo Account."
 msgstr ""
 
-#: src/Admin/Settings.php:150
+#: ../src/Admin/Settings.php:150
 msgid "Live - Private Salt"
 msgstr ""
 
-#: src/Admin/Settings.php:151
+#: ../src/Admin/Settings.php:151
 msgid "Please enter the private Salt from your LIVE Instamojo Account."
 msgstr ""
 
-#: src/Admin/Settings.php:157
+#: ../src/Admin/Settings.php:157
 msgid "Test - Private API Key"
 msgstr ""
 
-#: src/Admin/Settings.php:158
+#: ../src/Admin/Settings.php:158
 msgid "Please enter the private API key from your TEST Instamojo Account."
 msgstr ""
 
-#: src/Admin/Settings.php:164
+#: ../src/Admin/Settings.php:164
 msgid "Test - Private Auth Token"
 msgstr ""
 
-#: src/Admin/Settings.php:165
+#: ../src/Admin/Settings.php:165
 msgid "Please enter the private Authentication Token from your TEST Instamojo Account."
 msgstr ""
 
-#: src/Admin/Settings.php:171
+#: ../src/Admin/Settings.php:171
 msgid "Test - Private Salt"
 msgstr ""
 
-#: src/Admin/Settings.php:172
+#: ../src/Admin/Settings.php:172
 msgid "Please enter the private Salt from your TEST Instamojo Account."
 msgstr ""
 
-#: src/Admin/Settings.php:178
+#: ../src/Admin/Settings.php:178
 msgid "Collect Billing Address"
 msgstr ""
 
-#: src/Admin/Settings.php:179
+#: ../src/Admin/Settings.php:179
 msgid "You can collect the billing address of each donation by enabling this option."
 msgstr ""
 
-#: src/Admin/Settings.php:184
+#: ../src/Admin/Settings.php:184
 msgid "Enabled"
 msgstr ""
 
-#: src/Admin/Settings.php:185
+#: ../src/Admin/Settings.php:185
 msgid "Disabled"
 msgstr ""
 
-#: src/Includes/Actions.php:84
+#: ../src/Includes/Actions.php:84
 msgid "Donation Error"
 msgstr ""
 
 #. translators: %s: donation data
-#: src/Includes/Actions.php:87
+#: ../src/Includes/Actions.php:87
 msgid "Donation creation failed before processing payment via Instamojo. Donation data: %s"
 msgstr ""
 
-#: src/Includes/Actions.php:148
-#: src/Includes/Actions.php:156
+#: ../src/Includes/Actions.php:148, ../src/Includes/Actions.php:156
 msgid "Phone Number"
 msgstr ""
 
-#: src/Includes/Actions.php:150
-#: src/Includes/Actions.php:185
+#: ../src/Includes/Actions.php:150, ../src/Includes/Actions.php:185
 msgid "Please enter your phone number."
 msgstr ""
 
-#: src/Includes/Filters.php:40
+#: ../src/Includes/Filters.php:40
 msgid "Instamojo - Checkout"
 msgstr ""
