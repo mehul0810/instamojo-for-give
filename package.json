@@ -1,0 +1,18 @@
+{
+  "name": "instamojo-for-give",
+  "version": "1.0.0",
+  "description": "Accept donation using GiveWP with Instamojo payment gateway in India",
+  "scripts": {
+    "pot": "wp-pot --src '**/*.php' --dest-file 'languages/instamojo-for-give.pot' --package 'Instamojo for Give' --domain 'instamojo-for-give' --last-translator 'Mehul Gohil <hello@mehulgohil.com>' --team 'Mehul Gohil <hello@mehulgohil.com>' --bug-report 'https://github.com/mehul0810/instamojo-for-give'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mehul0810/instamojo-for-give.git"
+  },
+  "author": "Mehul Gohil",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/mehul0810/instamojo-for-give/issues"
+  },
+  "homepage": "https://github.com/mehul0810/instamojo-for-give#readme"
+}
