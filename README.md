@@ -16,9 +16,9 @@ If you're looking to contribute or actively develop, then skip ahead to the [Loc
 
 ### Minimum Requirements
 
-  * WordPress 4.8 or greater
-  * PHP version 5.6 or greater
-  * MySQL version 5.6 or greater
+- WordPress 4.8 or greater
+- PHP version 5.6 or greater
+- MySQL version 5.6 or greater
 
 ### Automatic installation
 
@@ -31,9 +31,10 @@ In the search field type "Instamojo for Give" and click Search Plugins. Once you
 The manual installation method involves downloading our donation plugin and uploading it to your server via your favorite FTP application. The WordPress codex contains [instructions on how to do this here](https://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation).
 
 ### Support
+
 This repository is not suitable for support. Please don't use GitHub issues for support requests. To get support please use the following channels:
 
-* [WP.org Support Forums](https://wordpress.org/support/plugin/mg-instamojo-for-give) - for all users
+- [WP.org Support Forums](https://wordpress.org/support/plugin/mg-instamojo-for-give) - for all users
 
 ## Local Development
 
@@ -52,23 +53,25 @@ That's it. You're now ready to start development.
 
 We rely on the following npm commands:
 
-* `npm run pot` - This will help to generate POT language files for production release.
+- `npm run pot` - This will help to generate POT language files for production release.
 
 ### Development Notes
 
-* Ensure that you have `SCRIPT_DEBUG` enabled within your wp-config.php file. Here's a good example of wp-config.php for debugging:
-    ```
-		// Enable WP_DEBUG mode
-		define( 'WP_DEBUG', true );
+- Ensure that you have `SCRIPT_DEBUG` enabled within your wp-config.php file. Here's a good example of wp-config.php for debugging:
 
-		// Enable Debug logging to the /wp-content/debug.log file
-		define( 'WP_DEBUG_LOG', true );
+  ```
+  	// Enable WP_DEBUG mode
+  	define( 'WP_DEBUG', true );
 
-		// Loads unminified core files
-		define( 'SCRIPT_DEBUG', true );
-    ```
-* Commit the `package.lock` file. Read more about why [here](https://docs.npmjs.com/files/package-lock.json).
-* Your editor should recognize the `.eslintrc` and `.editorconfig` files within the Repo's root directory _(if any exists)_. Please only submit PRs following those coding style rulesets.
-* Read [CONTRIBUTING.md](https://github.com/mehul0810/instamojo-for-give/blob/master/CONTRIBUTING.md) - it contains more about contributing to Instamojo for Give.
+  	// Enable Debug logging to the /wp-content/debug.log file
+  	define( 'WP_DEBUG_LOG', true );
+
+  	// Loads unminified core files
+  	define( 'SCRIPT_DEBUG', true );
+  ```
+
+- Commit the `package.lock` file. Read more about why [here](https://docs.npmjs.com/files/package-lock.json).
+- Your editor should recognize the `.eslintrc` and `.editorconfig` files within the Repo's root directory _(if any exists)_. Please only submit PRs following those coding style rulesets.
+- Read [CONTRIBUTING.md](https://github.com/mehul0810/instamojo-for-give/blob/master/CONTRIBUTING.md) - it contains more about contributing to Instamojo for Give.
 
 **P.S.:** This plugin is neither affiliated with GiveWP nor Instamojo. This plugin is developed and maintained by [Mehul Gohil](https://mehulgohil.com) as an open-source contribution towards WordPress
