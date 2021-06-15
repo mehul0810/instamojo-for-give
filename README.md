@@ -73,5 +73,3 @@ We rely on the following npm commands:
 - Commit the `package.lock` file. Read more about why [here](https://docs.npmjs.com/files/package-lock.json).
 - Your editor should recognize the `.eslintrc` and `.editorconfig` files within the Repo's root directory _(if any exists)_. Please only submit PRs following those coding style rulesets.
 - Read [CONTRIBUTING.md](https://github.com/mehul0810/instamojo-for-give/blob/master/CONTRIBUTING.md) - it contains more about contributing to Instamojo for Give.
-
-**P.S.:** This plugin is neither affiliated with GiveWP nor Instamojo. This plugin is developed and maintained by [Mehul Gohil](https://mehulgohil.com) as an open-source contribution towards WordPress
