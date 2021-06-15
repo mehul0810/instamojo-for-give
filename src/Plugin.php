@@ -6,8 +6,9 @@ use Instamojo\GiveWP\Admin as Admin;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	wp_die( 'Cheating Huh?' );
 }
+
 /**
  * Loads and registers plugin functionality through WordPress hooks.
  *

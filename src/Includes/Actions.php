@@ -1,7 +1,7 @@
 <?php
 /**
  * Instamojo for Give | Frontend Actions.
- * 
+ *
  * @package WordPress
  * @subpackage Instamojo for Give
  * @since 1.0.0
@@ -13,13 +13,13 @@ use Instamojo\GiveWP\Includes\Instamojo as Instamojo;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+    wp_die( 'Cheating Huh?' );
 }
 
 class Actions {
     /**
      * Constructor.
-     * 
+     *
      * @since  1.0.0
      * @access public
      */
@@ -36,10 +36,10 @@ class Actions {
      * Process Donation.
      *
      * @param array $data List of posted data.
-     * 
+     *
      * @since  1.0.0
      * @access public
-     * 
+     *
      * @return void
      */
     public function process_donation( $data ) {
@@ -107,18 +107,18 @@ class Actions {
                     give_get_success_page_uri()
                 ),
             ];
-            
+
             $response      = Instamojo::create_payment_request( $args );
             $response_body = json_decode( wp_remote_retrieve_body( $response ) );
             $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
-            
+
             if ( 201 === $response_code && $response_body->success ) {
                 give_update_meta( $donation_id, 'instamojo_for_give_payment_request_id', $response_body->payment_request->id );
-                
+
                 // Send donor to Instamojo Checkout page.
-                wp_redirect( $response_body->payment_request->longurl ); 
+                wp_redirect( $response_body->payment_request->longurl );
             } else {
-                echo '<pre>'; print_r($response); echo '</pre>';
+
                 // give_set_error();
             }
             // die();
@@ -168,7 +168,7 @@ class Actions {
      *
      * @param array $required_fields List of required fields.
      * @param int   $form_id         Donation Form ID.
-     * 
+     *
      * @since  1.0.0
      * @access public
      *
@@ -190,7 +190,7 @@ class Actions {
 
     /**
      * Register Assets.
-     * 
+     *
      * @since  1.0.0
      * @access public
      *
@@ -207,7 +207,7 @@ class Actions {
 
     /**
      * Listen to response.
-     * 
+     *
      * @since  1.0.0
      * @access public
      *
@@ -224,7 +224,7 @@ class Actions {
         $payment_request_id = $get_data['payment_request_id'];
         $payment_id         = $get_data['payment_id'];
         $donation_id        = Helpers::get_donation_id_by_meta( 'instamojo_for_give_payment_request_id', $payment_request_id );
-        
+
         $response      = Instamojo::get_payment_details( $payment_request_id, $payment_id );
         $response_body = json_decode( wp_remote_retrieve_body( $response ) );
         $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );

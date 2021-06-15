@@ -1,7 +1,7 @@
 <?php
 /**
  * Instamojo for Give | Instamojo API.
- * 
+ *
  * @package WordPress
  * @subpackage Instamojo for Give
  * @since 1.0.0
@@ -13,7 +13,7 @@ use Instamojo\GiveWP\Includes\Helpers as Helpers;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+    wp_die( 'Cheating Huh?' );
 }
 
 class Instamojo {
@@ -21,10 +21,10 @@ class Instamojo {
      * Create Payment Request.
      *
      * @param array $data Data to send.
-     * 
+     *
      * @since  1.0.0
      * @access public
-     * 
+     *
      * @return object
      */
     public static function create_payment_request( $data ) {
@@ -42,10 +42,10 @@ class Instamojo {
      *
      * @param string $payment_request_id Payment Request ID.
      * @param string $payment_id Payment ID.
-     * 
+     *
      * @since  1.0.0
      * @access public
-     * 
+     *
      * @return object
      */
     public static function get_payment_details( $payment_request_id, $payment_id ) {

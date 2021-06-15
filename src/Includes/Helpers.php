@@ -1,7 +1,7 @@
 <?php
 /**
  * Instamojo for Give | Frontend Actions.
- * 
+ *
  * @package WordPress
  * @subpackage Instamojo for Give
  * @since 1.0.0
@@ -11,13 +11,13 @@ namespace Instamojo\GiveWP\Includes;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+    wp_die( 'Cheating Huh?' );
 }
 
 class Helpers {
     /**
      * Get API Endpoint.
-     * 
+     *
      * @since  1.0.0
      * @access public
      *
@@ -30,13 +30,13 @@ class Helpers {
         if ( give_is_test_mode() ) {
             $url = "https://test.instamojo.com/api/{$version}/";
         }
-        
+
         return $url;
     }
 
     /**
      * Get Private API Key.
-     * 
+     *
      * @since  1.0.0
      * @access public
      *
@@ -48,13 +48,13 @@ class Helpers {
         if ( give_is_test_mode() ) {
             $key = give_get_option( 'instamojo_get_test_api_key' );
         }
-        
+
         return trim( $key );
     }
 
     /**
      * Get Private Auth Token.
-     * 
+     *
      * @since  1.0.0
      * @access public
      *
@@ -66,13 +66,13 @@ class Helpers {
         if ( give_is_test_mode() ) {
             $token = give_get_option( 'instamojo_get_test_auth_token' );
         }
-        
+
         return trim( $token );
     }
 
     /**
      * Get Private Salt.
-     * 
+     *
      * @since  1.0.0
      * @access public
      *
@@ -84,13 +84,13 @@ class Helpers {
         if ( give_is_test_mode() ) {
             $salt = give_get_option( 'instamojo_get_test_salt' );
         }
-        
+
         return trim( $salt );
     }
 
     /**
      * Get Headers.
-     * 
+     *
      * @since  1.0.0
      * @access public
      *

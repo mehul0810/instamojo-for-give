@@ -13,7 +13,7 @@ use Instamojo\GiveWP\Includes\Helpers as Helpers;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	wp_die( 'Cheating Huh?' );
 }
 
 class Settings {
@@ -36,10 +36,10 @@ class Settings {
 	 *
 	 * @param array  $value        List of settings parameters.
 	 * @param string $option_value Option value.
-	 * 
+	 *
 	 * @since  1.0.0
 	 * @access public
-	 * 
+	 *
 	 * @return mixed
 	 */
 	public function render_cta_notice( $value, $option_value ) {
@@ -49,7 +49,7 @@ class Settings {
 			<td class="give-cta-notice-wrap" style="padding: 0;" colspan="2">
 				<div class="give-cta-notice" style="background-color: #fff; margin-bottom: 20px;">
 					<h3 style="text-transform: uppercase; font-size: 14px; font-weight: 700; margin-top: 0; border-bottom: 2px solid #f5f5f5; padding: 12px 20px;">
-						<?php echo $value['title']; ?>
+						<?php esc_attr_e( $value['title'] ); ?>
 					</h3>
 					<ol style="margin: 10px 35px; font-size: 13px">
 						<?php
@@ -59,7 +59,7 @@ class Settings {
 						?>
 					</ol>
 					<p class="give-field-description">
-						<?php echo $value['desc']; ?>
+						<?php esc_attr_e( $value['desc'] ); ?>
 					</p>
 				</div>
 			</td>

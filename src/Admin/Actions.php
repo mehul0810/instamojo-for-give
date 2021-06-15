@@ -1,7 +1,7 @@
 <?php
 /**
  * Instamojo for Give | Admin Actions.
- * 
+ *
  * @package WordPress
  * @subpackage Instamojo for Give
  * @since 1.0.0
@@ -11,13 +11,13 @@ namespace Instamojo\GiveWP\Admin;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+    wp_die( 'Cheating Huh?' );
 }
 
 class Actions {
     /**
      * Constructor.
-     * 
+     *
      * @since  1.0.0
      * @access public
      */
@@ -41,9 +41,9 @@ class Actions {
 		<div class="column">
 			<p>
 				<strong>
-					<?php _e( 'Phone:', 'instamojo-for-give' ); ?>
+					<?php esc_html_e( 'Phone:', 'instamojo-for-give' ); ?>
 				</strong><br/>
-				<?php echo ! empty( $phone ) ? $phone : esc_html__( 'N/A', 'instamojo-for-give' ); ?>
+				<?php ! empty( $phone ) ? $phone : esc_html_e( 'N/A', 'instamojo-for-give' ); ?>
 			</p>
 		</div>
 		<?php

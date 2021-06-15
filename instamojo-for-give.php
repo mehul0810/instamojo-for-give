@@ -26,14 +26,14 @@ namespace Instamojo\GiveWP;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	wp_die( 'Cheating Huh?' );
 }
 
 // Load Constants.
 require_once __DIR__ . '/config/constants.php';
 
 // Automatically loads files used throughout the plugin.
-require_once INSTAMOJO_FOR_GIVE_PLUGIN_DIR . 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 // Initialize the plugin.
 $plugin = new Plugin();
