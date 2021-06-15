@@ -1,7 +1,7 @@
 <?php
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	wp_die( 'Cheating Huh?' );
 }
 
 // Define plugin version in SemVer format.
