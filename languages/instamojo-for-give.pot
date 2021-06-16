@@ -136,20 +136,20 @@ msgstr ""
 msgid "Disabled"
 msgstr ""
 
-#: ../src/Includes/Actions.php:84
+#: ../src/Includes/Actions.php:83
 msgid "Donation Error"
 msgstr ""
 
 #. translators: %s: donation data
-#: ../src/Includes/Actions.php:87
+#: ../src/Includes/Actions.php:86
 msgid "Donation creation failed before processing payment via Instamojo. Donation data: %s"
 msgstr ""
 
-#: ../src/Includes/Actions.php:148, ../src/Includes/Actions.php:156
+#: ../src/Includes/Actions.php:161, ../src/Includes/Actions.php:169
 msgid "Phone Number"
 msgstr ""
 
-#: ../src/Includes/Actions.php:150, ../src/Includes/Actions.php:185
+#: ../src/Includes/Actions.php:163, ../src/Includes/Actions.php:198
 msgid "Please enter your phone number."
 msgstr ""
 
