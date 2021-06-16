@@ -1,8 +1,8 @@
 <?php
-namespace Instamojo\GiveWP;
+namespace MG\Instamojo\GiveWP;
 
-use Instamojo\GiveWP\Includes as Includes;
-use Instamojo\GiveWP\Admin as Admin;
+use MG\Instamojo\GiveWP\Includes as Includes;
+use MG\Instamojo\GiveWP\Admin as Admin;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

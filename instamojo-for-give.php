@@ -22,7 +22,7 @@
 * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
 */
 
-namespace Instamojo\GiveWP;
+namespace MG\Instamojo\GiveWP;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

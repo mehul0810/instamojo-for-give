@@ -1,13 +1,13 @@
 <?php
 /**
- * Instamojo for Give | Frontend Actions.
+ * Instamojo for Give | Helpers.
  *
  * @package WordPress
  * @subpackage Instamojo for Give
  * @since 1.0.0
  */
 
-namespace Instamojo\GiveWP\Includes;
+namespace MG\Instamojo\GiveWP\Includes;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

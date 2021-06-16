@@ -7,7 +7,7 @@
  * @since 1.0.0
  */
 
-namespace Instamojo\GiveWP\Admin;
+namespace MG\Instamojo\GiveWP\Admin;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

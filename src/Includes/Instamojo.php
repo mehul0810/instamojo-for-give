@@ -7,9 +7,9 @@
  * @since 1.0.0
  */
 
-namespace Instamojo\GiveWP\Includes;
+namespace MG\Instamojo\GiveWP\Includes;
 
-use Instamojo\GiveWP\Includes\Helpers as Helpers;
+use MG\Instamojo\GiveWP\Includes\Helpers as Helpers;
 
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
