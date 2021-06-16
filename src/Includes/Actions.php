@@ -123,7 +123,7 @@ class Actions {
 				// Set error message to show on donation form.
                 give_set_error( 'invalid-response', $message_content[0][0] );
 
-				// Donation Abandoned.
+				// Update donation status to `Abandoned`.
 				give_update_payment_status( $donation_id, 'abandoned' );
 
 				// Set Donation Note.
@@ -241,19 +241,30 @@ class Actions {
         }
 
         $payment_request_id = $get_data['payment_request_id'];
-        $payment_id         = $get_data['payment_id'];
+        $transaction_id     = $get_data['payment_id'];
         $donation_id        = Helpers::get_donation_id_by_meta( 'instamojo_for_give_payment_request_id', $payment_request_id );
 
-        $response      = Instamojo::get_payment_details( $payment_request_id, $payment_id );
+        $response      = Instamojo::get_payment_details( $payment_request_id, $transaction_id );
         $response_body = json_decode( wp_remote_retrieve_body( $response ) );
         $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
 
         if ( 200 === $response_code && 'Completed' === $response_body->payment_request->status ) {
-            give_update_payment_status( $donation_id, 'publish' );
-            give_set_payment_transaction_id( $donation_id, $payment_id );
-            give_send_to_success_page();
+            // Update donation status to `Complete`.
+			give_update_payment_status( $donation_id, 'publish' );
+
+			// Link `Transaction ID` to the donation.
+            give_set_payment_transaction_id( $donation_id, $transaction_id );
+
+			// Send donor to `Donation Confirmation` page.
+			give_send_to_success_page();
         } else {
+			// Update donation status to `Failed`.
             give_update_payment_status( $donation_id, 'failed' );
+
+			// Set Donation Note.
+			give_insert_payment_note( $donation_id, esc_html__( 'Donation didn\'t go through as the payment with Instamojo has failed.') );
+
+			// Redirect to `Donation Failed` page as payment didn't go through.
             wp_redirect( give_get_failed_transaction_uri() );
         }
     }
