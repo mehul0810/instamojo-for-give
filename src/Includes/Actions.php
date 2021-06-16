@@ -48,7 +48,6 @@ class Actions {
 
         if ( ! $errors ) {
             $formId         = ! empty( $data['post_data']['give-form-id'] ) ? intval( $data['post_data']['give-form-id'] ) : false;
-            $current_url    = ! empty( $data['post_data']['give-current-url'] ) ? $data['post_data']['give-current-url'] : false;
             $donorPhone     = ! empty( $data['post_data']['give_phone'] ) ? $data['post_data']['give_phone'] : '';
             $currency       = give_get_currency( $formId );
             $donorEmail     = $data['user_email'];
@@ -118,10 +117,24 @@ class Actions {
                 // Send donor to Instamojo Checkout page.
                 wp_redirect( $response_body->payment_request->longurl );
             } else {
+				$message_details = array_values( (array) $response_body->message );
+				$message_content = $message_details[0][0];
 
-                // give_set_error();
+				// Set error message to show on donation form.
+                give_set_error( 'invalid-response', $message_content[0][0] );
+
+				// Donation Abandoned.
+				give_update_payment_status( $donation_id, 'abandoned' );
+
+				// Set Donation Note.
+				give_insert_payment_note( $donation_id, "Donation automatically abandoned due to error: {$message_content[0][0]}" );
+
+				// Problems? Send back.
+                give_send_back_to_checkout( '?payment-mode=' . $data['post_data']['payment-mode'] );
             }
-            // die();
+
+			// Don't proceed further.
+            give_die();
         }
 
     }
@@ -217,7 +230,13 @@ class Actions {
         $get_data = give_clean( $_GET );
 
         // Bailout, if the listener is not from Instamojo Checkout.
-        if ( 'instamojo_checkout' !== $get_data['listener'] ) {
+        if (
+			! isset( $get_data['listener'] ) ||
+			(
+				! empty( $get_data['listener'] ) &&
+				'instamojo_checkout' !== $get_data['listener']
+			)
+		) {
             return;
         }
 
