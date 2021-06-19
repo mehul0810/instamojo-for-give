@@ -1,9 +1,9 @@
-=== Instamojo for GiveWP ===
+=== MG - Instamojo for GiveWP ===
 Contributors: mehul0810
 Tags: instamojo, givewp, donations
 Donate link: https://www.buymeacoffee.com/mehulgohil
 Requires at least: 4.8
-Tested up to: 5.8
+Tested up to: 5.7
 Requires PHP: 5.6
 Stable tag: 1.0.0
 License: GPLv3

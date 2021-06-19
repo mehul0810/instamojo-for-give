@@ -112,7 +112,7 @@ class Actions {
             $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
 
             if ( 201 === $response_code && $response_body->success ) {
-                give_update_meta( $donation_id, 'instamojo_for_give_payment_request_id', $response_body->payment_request->id );
+                give_update_meta( $donation_id, 'MG_instamojo_for_give_payment_request_id', $response_body->payment_request->id );
 
                 // Send donor to Instamojo Checkout page.
                 wp_redirect( $response_body->payment_request->longurl );
@@ -215,7 +215,7 @@ class Actions {
             return;
         }
 
-        wp_enqueue_script( 'instamojo-checkout', 'https://js.instamojo.com/v1/checkout.js', '', INSTAMOJO_FOR_GIVE_VERSION );
+        wp_enqueue_script( 'instamojo-checkout', 'https://js.instamojo.com/v1/checkout.js', '', MG_INSTAMOJO_FOR_GIVE_VERSION );
     }
 
     /**
@@ -242,7 +242,7 @@ class Actions {
 
         $payment_request_id = $get_data['payment_request_id'];
         $transaction_id     = $get_data['payment_id'];
-        $donation_id        = Helpers::get_donation_id_by_meta( 'instamojo_for_give_payment_request_id', $payment_request_id );
+        $donation_id        = Helpers::get_donation_id_by_meta( 'MG_instamojo_for_give_payment_request_id', $payment_request_id );
 
         $response      = Instamojo::get_payment_details( $payment_request_id, $transaction_id );
         $response_body = json_decode( wp_remote_retrieve_body( $response ) );

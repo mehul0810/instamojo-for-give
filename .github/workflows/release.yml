@@ -37,6 +37,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{github.workspace}}/instamojo-for-give.zip
-          asset_name: instamojo-for-give.zip
+          asset_path: ${{github.workspace}}/mg-instamojo-for-give.zip
+          asset_name: mg-instamojo-for-give.zip
           asset_content_type: application/zip

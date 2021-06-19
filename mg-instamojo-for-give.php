@@ -9,7 +9,7 @@
 *
 * @wordpress-plugin
 *
-* Plugin Name:       Instamojo for Give
+* Plugin Name:       MG - Instamojo for Give
 * Plugin URI:        https://wordpress.org/plugins/instamojo-for-give
 * Description:       Accept donations via Instamojo payment gateway using GiveWP.
 * Version:           1.0.0

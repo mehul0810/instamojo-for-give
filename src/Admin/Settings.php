@@ -54,7 +54,7 @@ class Settings {
 					<ol style="margin: 10px 35px; font-size: 13px">
 						<?php
 						foreach ( $value['steps'] as $step ) {
-							echo $step;
+							_e( $step ); // No need for extensive escaping as this array is internally defined.
 						}
 						?>
 					</ol>

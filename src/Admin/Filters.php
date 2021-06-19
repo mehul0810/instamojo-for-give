@@ -22,7 +22,7 @@ class Filters {
      * @access public
      */
     public function __construct() {
-        add_filter( 'plugin_action_links_' . INSTAMOJO_FOR_GIVE_PLUGIN_BASENAME, [ $this, 'add_plugin_action_links' ] );
+        add_filter( 'plugin_action_links_' . MG_INSTAMOJO_FOR_GIVE_PLUGIN_BASENAME, [ $this, 'add_plugin_action_links' ] );
     }
 
     /**

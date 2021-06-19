@@ -26,8 +26,8 @@ final class Plugin {
 	 */
 	public function register() {
 		// Handle plugin activation and deactivation.
-		register_activation_hook( INSTAMOJO_FOR_GIVE_PLUGIN_FILE, [ $this, 'activate' ] );
-		register_deactivation_hook( INSTAMOJO_FOR_GIVE_PLUGIN_FILE, [ $this, 'deactivate' ] );
+		register_activation_hook( MG_INSTAMOJO_FOR_GIVE_PLUGIN_FILE, [ $this, 'activate' ] );
+		register_deactivation_hook( MG_INSTAMOJO_FOR_GIVE_PLUGIN_FILE, [ $this, 'deactivate' ] );
 
 		// Register services used throughout the plugin.
 		add_action( 'plugins_loaded', [ $this, 'register_services' ] );
@@ -69,7 +69,7 @@ final class Plugin {
 		load_plugin_textdomain(
 			'instamojo-for-give',
 			false,
-			dirname( plugin_basename( INSTAMOJO_FOR_GIVE_PLUGIN_FILE ) ) . '/languages/'
+			dirname( plugin_basename( MG_INSTAMOJO_FOR_GIVE_PLUGIN_FILE ) ) . '/languages/'
 		);
 	}
 
