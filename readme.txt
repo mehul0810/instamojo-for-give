@@ -1,6 +1,6 @@
 === MG - Instamojo for GiveWP ===
 Contributors: mehul0810
-Tags: instamojo, givewp, donations
+Tags: instamojo, givewp, donations, fundraising
 Donate link: https://github.com/sponsors/mehul0810
 Requires at least: 4.8
 Tested up to: 6.3
