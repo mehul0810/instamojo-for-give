@@ -5,6 +5,7 @@ Donate link: https://github.com/sponsors/mehul0810
 Requires at least: 4.8
 Tested up to: 6.5
 Requires PHP: 8.1
+Requires Plugins: give
 Stable tag: 1.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
