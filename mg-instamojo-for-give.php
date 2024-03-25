@@ -15,6 +15,8 @@
 * Version:           1.0.0
 * Requires at least: 4.8
 * Requires PHP:      5.6
+* Tested up to:      6.5
+* Requires Plugins:  give
 * Author:            Mehul Gohil
 * Author URI:        https://mehulgohil.com
 * Text Domain:       instamojo-for-give
