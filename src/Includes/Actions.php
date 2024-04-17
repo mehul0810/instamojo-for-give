@@ -45,7 +45,6 @@ class Actions {
     public function process_donation( $data ) {
         // Check for any stored errors.
         $errors = give_get_errors();
-
         if ( ! $errors ) {
             $formId         = ! empty( $data['post_data']['give-form-id'] ) ? intval( $data['post_data']['give-form-id'] ) : false;
             $donorPhone     = ! empty( $data['post_data']['give_phone'] ) ? $data['post_data']['give_phone'] : '';
@@ -106,11 +105,9 @@ class Actions {
                     give_get_success_page_uri()
                 ),
             ];
-
             $response      = Instamojo::create_payment_request( $args );
             $response_body = json_decode( wp_remote_retrieve_body( $response ) );
             $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
-
             if ( 201 === $response_code && $response_body->success ) {
                 give_update_meta( $donation_id, 'MG_instamojo_for_give_payment_request_id', $response_body->payment_request->id );
 
@@ -118,16 +115,16 @@ class Actions {
                 wp_redirect( $response_body->payment_request->longurl );
             } else {
 				$message_details = array_values( (array) $response_body->message );
-				$message_content = $message_details[0][0];
-
+				$message_content = $message_details[0];
+                
 				// Set error message to show on donation form.
-                give_set_error( 'invalid-response', $message_content[0][0] );
+                give_set_error( 'invalid-response', $message_content );
 
 				// Update donation status to `Abandoned`.
 				give_update_payment_status( $donation_id, 'abandoned' );
 
 				// Set Donation Note.
-				give_insert_payment_note( $donation_id, "Donation automatically abandoned due to error: {$message_content[0][0]}" );
+				give_insert_payment_note( $donation_id, "Donation automatically abandoned due to error: {$message_content}" );
 
 				// Problems? Send back.
                 give_send_back_to_checkout( '?payment-mode=' . $data['post_data']['payment-mode'] );
@@ -228,7 +225,7 @@ class Actions {
      */
     public function listen_to_response() {
         $get_data = give_clean( $_GET );
-
+        
         // Bailout, if the listener is not from Instamojo Checkout.
         if (
 			! isset( $get_data['listener'] ) ||

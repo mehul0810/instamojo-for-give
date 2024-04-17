@@ -24,9 +24,9 @@ class Helpers {
      * @return void
      */
     public static function get_api_endpoint() {
-        $version = apply_filters( 'instamojo_for_give_api_version' , '1.1' );
-        $url     = "https://instamojo.com/api/{$version}/";
-
+        $version = apply_filters( 'instamojo_for_give_api_version' , 'v2' );
+        $url     = "https://api.instamojo.com/{$version}/";
+        
         if ( give_is_test_mode() ) {
             $url = "https://test.instamojo.com/api/{$version}/";
         }
@@ -62,7 +62,7 @@ class Helpers {
      */
     public static function get_private_auth_token() {
         $token = give_get_option( 'instamojo_get_live_auth_token' );
-
+        
         if ( give_is_test_mode() ) {
             $token = give_get_option( 'instamojo_get_test_auth_token' );
         }
@@ -97,9 +97,9 @@ class Helpers {
      * @return array
      */
     public static function get_headers() {
+        $access_token = self::get_private_auth_token();
         return [
-            'X-Api-Key'    => self::get_private_api_key(),
-            'X-Auth-Token' => self::get_private_auth_token(),
+            'Authorization' => "Bearer {$access_token}",
         ];
     }
 

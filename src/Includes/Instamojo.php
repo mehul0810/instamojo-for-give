@@ -28,12 +28,11 @@ class Instamojo {
      * @return object
      */
     public static function create_payment_request( $data ) {
-        $url  = Helpers::get_api_endpoint() . 'payment-requests';
+        $url  = Helpers::get_api_endpoint() . 'payment_requests/';
         $args = [
             'headers' => Helpers::get_headers(),
             'body'    => $data,
         ];
-
         return wp_remote_post( $url, $args );
     }
 
