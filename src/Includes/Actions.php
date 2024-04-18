@@ -108,11 +108,14 @@ class Actions {
             $response      = Instamojo::create_payment_request( $args );
             $response_body = json_decode( wp_remote_retrieve_body( $response ) );
             $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
-            if ( 201 === $response_code && $response_body->success ) {
-                give_update_meta( $donation_id, 'MG_instamojo_for_give_payment_request_id', $response_body->payment_request->id );
+            
+            $response_codes = [200, 201];
+            
+            if ( in_array( $response_code, $response_codes, true ) ) {
+                give_update_meta( $donation_id, 'MG_instamojo_for_give_payment_request_id', $response_body->id );
 
                 // Send donor to Instamojo Checkout page.
-                wp_redirect( $response_body->payment_request->longurl );
+                wp_redirect( $response_body->longurl );
             } else {
 				$message_details = array_values( (array) $response_body->message );
 				$message_content = $message_details[0];

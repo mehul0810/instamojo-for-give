@@ -28,64 +28,50 @@ class Helpers {
         $url     = "https://api.instamojo.com/{$version}/";
         
         if ( give_is_test_mode() ) {
-            $url = "https://test.instamojo.com/api/{$version}/";
+            $url = "https://test.instamojo.com/{$version}/";
         }
 
         return $url;
     }
 
     /**
-     * Get Private API Key.
+     * Get Access Token.
      *
      * @since  1.0.0
      * @access public
      *
      * @return string
      */
-    public static function get_private_api_key() {
-        $key = give_get_option( 'instamojo_get_live_api_key' );
-
-        if ( give_is_test_mode() ) {
-            $key = give_get_option( 'instamojo_get_test_api_key' );
-        }
-
-        return trim( $key );
-    }
-
-    /**
-     * Get Private Auth Token.
-     *
-     * @since  1.0.0
-     * @access public
-     *
-     * @return string
-     */
-    public static function get_private_auth_token() {
-        $token = give_get_option( 'instamojo_get_live_auth_token' );
+    public static function get_access_token() {
+        $client_id = give_get_option( 'mg_instamojo_get_test_client_id' );
+        $client_secret = give_get_option( 'mg_instamojo_get_test_client_secret' );
+        $url  = 'https://api.instamojo.com/oauth2/token/';
         
         if ( give_is_test_mode() ) {
-            $token = give_get_option( 'instamojo_get_test_auth_token' );
+            $client_id = give_get_option( 'mg_instamojo_get_test_client_id' );
+            $client_secret = give_get_option( 'mg_instamojo_get_test_client_secret' );
+            $url  = 'https://test.instamojo.com/oauth2/token/';
         }
 
-        return trim( $token );
-    }
+        $payload_data = [
+            'grant_type' => 'client_credentials',
+            'client_id' => $client_id,
+            'client_secret' => $client_secret
+        ];
 
-    /**
-     * Get Private Salt.
-     *
-     * @since  1.0.0
-     * @access public
-     *
-     * @return string
-     */
-    public static function get_private_salt() {
-        $salt = give_get_option( 'instamojo_get_live_salt' );
-
-        if ( give_is_test_mode() ) {
-            $salt = give_get_option( 'instamojo_get_test_salt' );
+        $args = [
+            'body'    => $payload_data,
+        ];
+        
+        $response     = wp_remote_post( $url, $args );
+        $response_body = json_decode( wp_remote_retrieve_body( $response ) );
+        $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
+        
+        if(200 === $response_code) {
+            return $response_body->access_token;
+        } else {
+            return '';
         }
-
-        return trim( $salt );
     }
 
     /**
@@ -97,7 +83,7 @@ class Helpers {
      * @return array
      */
     public static function get_headers() {
-        $access_token = self::get_private_auth_token();
+        $access_token = self::get_access_token();
         return [
             'Authorization' => "Bearer {$access_token}",
         ];
