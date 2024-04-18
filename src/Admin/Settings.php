@@ -156,14 +156,14 @@ class Settings {
 					[
 						'name'    => esc_html__( 'Client Id', 'instamojo-for-give' ),
 						'desc'    => esc_html__( 'Please enter the client id from your LIVE Instamojo Account.', 'instamojo-for-give' ),
-						'id'      => 'instamojo_get_client_id',
+						'id'      => 'mg_instamojo_get_client_id',
 						'type'    => 'text',
 						'default' => '',
 					],
 					[
 						'name'    => esc_html__( 'Client Secret', 'instamojo-for-give' ),
 						'desc'    => esc_html__( 'Please enter the client secret from your LIVE Instamojo Account.', 'instamojo-for-give' ),
-						'id'      => 'instamojo_get_client_secret',
+						'id'      => 'mg_instamojo_get_client_secret',
 						'type'    => 'text',
 						'default' => '',
 					],

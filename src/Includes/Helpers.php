@@ -79,11 +79,11 @@ class Helpers {
      * @return string
      */
     public static function get_access_token() {
-        $client_id = give_get_option( 'instamojo_get_client_id' );
-        $client_secret = give_get_option( 'instamojo_get_client_secret' );
+        $client_id = give_get_option( 'mg_instamojo_get_client_id' );
+        $client_secret = give_get_option( 'mg_instamojo_get_client_secret' );
 
         if ( give_is_test_mode() ) {
-           // $token = give_get_option( 'instamojo_get_test_auth_token' );
+           
         }
 
         $payload_data = [
