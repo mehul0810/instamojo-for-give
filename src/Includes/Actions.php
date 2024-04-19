@@ -248,7 +248,7 @@ class Actions {
         $response_body = json_decode( wp_remote_retrieve_body( $response ) );
         $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
 
-        if ( 200 === $response_code && 'Completed' === $response_body->payment_request->status ) {
+        if ( 200 === $response_code && true === $response_body->status ) {
             // Update donation status to `Complete`.
 			give_update_payment_status( $donation_id, 'publish' );
 
