@@ -49,7 +49,7 @@ class Instamojo {
      */
     public static function get_payment_details( $payment_request_id, $payment_id ) {
         $endpoint = Helpers::get_api_endpoint();
-        $url      = "{$endpoint}payment-requests/{$payment_request_id}/{$payment_id}";
+        $url      = "{$endpoint}payments/{$payment_id}";
         $args     = [
             'headers' => Helpers::get_headers(),
         ];
