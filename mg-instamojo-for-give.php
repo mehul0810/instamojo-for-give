@@ -5,23 +5,23 @@
 * @package           Instamojo for Give
 * @author            Mehul Gohil
 * @copyright         2021 Mehul Gohil <hello@mehulgohil.com>
-* @license           GPL-2.0-or-later
+* @license           GPL-3.0-or-later
 *
 * @wordpress-plugin
 *
 * Plugin Name:       MG - Instamojo for Give
 * Plugin URI:        https://wordpress.org/plugins/instamojo-for-give
 * Description:       Accept donations via Instamojo payment gateway using GiveWP.
-* Version:           1.0.0
+* Version:           1.0.1
 * Requires at least: 4.8
-* Requires PHP:      5.6
-* Tested up to:      6.5
+* Requires PHP:      7.2
+* Tested up to:      6.7
 * Requires Plugins:  give
 * Author:            Mehul Gohil
 * Author URI:        https://mehulgohil.com
 * Text Domain:       instamojo-for-give
-* License:           GPL v2 or later
-* License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+* License:           GPL v3 or later
+* License URI:       https://www.gnu.org/licenses/gpl-3.0.txt
 */
 
 namespace MG\Instamojo\GiveWP;

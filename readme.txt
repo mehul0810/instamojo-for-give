@@ -1,12 +1,12 @@
 === MG - Instamojo for GiveWP ===
-Contributors: mehul0810
+Contributors: mehul0810, ankur0812
 Tags: instamojo, givewp, donations, fundraising
 Donate link: https://github.com/sponsors/mehul0810
 Requires at least: 4.8
-Tested up to: 6.5
-Requires PHP: 8.1
+Tested up to: 6.7
+Requires PHP: 7.2
 Requires Plugins: give
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
@@ -62,6 +62,9 @@ Not at the moment. We will roll out GiveWP recurring donations addon support in 
 Yes. It does support GiveWP fee recovery addon
 
 == Changelog ==
+= ✅ 1.0.1 =
+Add Support to Wordpress 6.7
+
 = ✅ 1.0.0 =
 Initial release.
 
