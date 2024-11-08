@@ -1,0 +1,38 @@
+{
+    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+    "landingPage": "/wp-admin/edit.php?post_type=give_forms&page=give-settings&tab=gateways&section=instamojo",
+    "features": {
+        "networking": true
+    },
+    "preferredVersions": {
+        "php": "7.4",
+        "wp": "6.2"
+    },
+    "steps": [
+        {
+            "step": "login",
+            "username": "admin",
+            "password": "password"
+        },
+        {
+            "step": "installPlugin",
+            "pluginZipFile": {
+                "resource": "wordpress.org\/plugins",
+                "slug": "give"
+            },
+            "options": {
+                "activate": true
+            }
+        },
+        {
+            "step": "installPlugin",
+            "pluginZipFile": {
+                "resource": "wordpress.org\/plugins",
+                "slug": "mg-instamojo-for-give"
+            },
+            "options": {
+                "activate": true
+            }
+        }
+    ]
+}
