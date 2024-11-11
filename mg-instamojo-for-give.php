@@ -14,7 +14,7 @@
 * Description:       Accept donations via Instamojo payment gateway using GiveWP.
 * Version:           1.0.1
 * Requires at least: 4.8
-* Requires PHP:      7.2
+* Requires PHP:      8.1
 * Tested up to:      6.7
 * Requires Plugins:  give
 * Author:            Mehul Gohil

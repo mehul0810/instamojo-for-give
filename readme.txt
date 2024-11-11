@@ -4,7 +4,7 @@ Tags: instamojo, givewp, donations, fundraising
 Donate link: https://github.com/sponsors/mehul0810
 Requires at least: 4.8
 Tested up to: 6.7
-Requires PHP: 7.2
+Requires PHP: 8.1
 Requires Plugins: give
 Stable tag: 1.0.1
 License: GPLv3
@@ -63,7 +63,8 @@ Yes. It does support GiveWP fee recovery addon
 
 == Changelog ==
 = ✅ 1.0.1 =
-Add Support to Wordpress 6.7
+Added Support to Wordpress 6.7
+Changed minimum required PHP version to 8.1
 
 = ✅ 1.0.0 =
 Initial release.

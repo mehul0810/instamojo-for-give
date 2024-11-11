@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Define plugin version in SemVer format.
 if ( ! defined( 'MG_INSTAMOJO_FOR_GIVE_VERSION' ) ) {
-	define( 'MG_INSTAMOJO_FOR_GIVE_VERSION', '1.0.0' );
+	define( 'MG_INSTAMOJO_FOR_GIVE_VERSION', '1.0.1' );
 }
 
 // Define plugin root File.
