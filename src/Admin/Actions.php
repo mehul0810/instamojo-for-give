@@ -23,7 +23,7 @@ class Actions {
      */
     public function __construct() {
         add_action( 'give_payment_view_details', [ $this, 'show_phone_field' ] );
-    }
+	}
 
     /**
 	 * Show Phone Field under Donation Details.
