@@ -49,6 +49,19 @@ class Actions {
             $formId         = ! empty( $data['post_data']['give-form-id'] ) ? intval( $data['post_data']['give-form-id'] ) : false;
             $donorPhone     = ! empty( $data['post_data']['give_phone'] ) ? $data['post_data']['give_phone'] : '';
             $currency       = give_get_currency( $formId );
+            if ( 'INR' !== strtoupper( (string) $currency ) ) {
+                give_set_error( 'instamojo-currency', esc_html__( 'Instamojo donations require INR currency.', 'instamojo-for-give' ) );
+                give_send_back_to_checkout( '?payment-mode=' . $data['post_data']['payment-mode'] );
+                return;
+            }
+            $version = ApiSelection::for_new_donation();
+            $environment = give_is_test_mode() ? 'test' : 'live';
+            $client = new ApiClient( $version, $environment );
+            if ( ! $client->is_configured() ) {
+                give_set_error( 'instamojo-credentials', esc_html__( 'Instamojo credentials are incomplete for the selected API and environment.', 'instamojo-for-give' ) );
+                give_send_back_to_checkout( '?payment-mode=' . $data['post_data']['payment-mode'] );
+                return;
+            }
             $donorEmail     = $data['user_email'];
             $purchaseKey    = $data['purchase_key'];
             $donationAmount = $data['price'];
@@ -92,41 +105,28 @@ class Actions {
                 give_send_back_to_checkout( '?payment-mode=' . $data['post_data']['payment-mode'] );
             }
 
+            give_update_meta( $donation_id, 'MG_instamojo_for_give_api_version', $version );
+            give_update_meta( $donation_id, 'MG_instamojo_for_give_environment', $environment );
             $args = [
                 'amount'       => give_maybe_sanitize_amount( $donationAmount ),
                 'purpose'      => "Donation for {$formTitle}",
                 'buyer_name'   => $donorName,
                 'email'        => $donorEmail,
                 'phone'        => $donorPhone,
-                'redirect_url' => add_query_arg(
-                    [
-                        'listener' => 'instamojo_checkout',
-                    ],
-                    give_get_success_page_uri()
-                ),
+                'allow_repeated_payments' => false,
+                'redirect_url' => add_query_arg( [ 'listener' => 'instamojo_checkout' ], give_get_success_page_uri() ),
+                'webhook'      => add_query_arg( [ 'listener' => 'instamojo_checkout_webhook' ], home_url( '/' ) ),
             ];
-            $response      = Instamojo::create_payment_request( $args );
-            $response_body = json_decode( wp_remote_retrieve_body( $response ) );
-            $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
-            if ( 201 === $response_code && $response_body->success ) {
-                give_update_meta( $donation_id, 'MG_instamojo_for_give_payment_request_id', $response_body->payment_request->id );
-
-                // Send donor to Instamojo Checkout page.
-                wp_redirect( $response_body->payment_request->longurl );
+            give_update_meta( $donation_id, 'MG_instamojo_for_give_account_fingerprint', $client->account_fingerprint() );
+            $response = $client->create( $args );
+            $request = $client->parse_create( $response );
+            if ( $request ) {
+                give_update_meta( $donation_id, 'MG_instamojo_for_give_payment_request_id', $request['id'] );
+                wp_redirect( $request['url'] );
             } else {
-				$message_details = array_values( (array) $response_body->message );
-				$message_content = $message_details[0];
-                
-				// Set error message to show on donation form.
-                give_set_error( 'invalid-response', $message_content );
-
-				// Update donation status to `Abandoned`.
-				give_update_payment_status( $donation_id, 'abandoned' );
-
-				// Set Donation Note.
-				give_insert_payment_note( $donation_id, "Donation automatically abandoned due to error: {$message_content}" );
-
-				// Problems? Send back.
+                // An ambiguous provider response must not mark a possibly payable donation failed.
+                give_set_error( 'invalid-response', esc_html__( 'Could not confirm an Instamojo payment request. Please contact the site administrator before trying again.', 'instamojo-for-give' ) );
+                give_insert_payment_note( $donation_id, 'Instamojo payment request was not confirmed; manual review may be needed.' );
                 give_send_back_to_checkout( '?payment-mode=' . $data['post_data']['payment-mode'] );
             }
 
@@ -187,7 +187,7 @@ class Actions {
     public static function require_phone_field( $required_fields, $form_id ) {
         // Bailout, if Instamojo Checkout is not the selected payment gateway.
         if ( 'instamojo_checkout' !== give_get_chosen_gateway( $form_id ) ) {
-            return;
+            return $required_fields;
         }
 
         $required_fields['give_phone'] = [
@@ -224,45 +224,153 @@ class Actions {
      * @return void
      */
     public function listen_to_response() {
-        $get_data = give_clean( $_GET );
-        
-        // Bailout, if the listener is not from Instamojo Checkout.
-        if (
-			! isset( $get_data['listener'] ) ||
-			(
-				! empty( $get_data['listener'] ) &&
-				'instamojo_checkout' !== $get_data['listener']
-			)
-		) {
-            return;
+        $listener = isset( $_GET['listener'] ) ? (string) $_GET['listener'] : '';
+        if ( 'instamojo_checkout' === $listener ) {
+            $this->handle_return();
+        } elseif ( 'instamojo_checkout_webhook' === $listener && isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+            $this->handle_webhook();
         }
+    }
 
-        $payment_request_id = $get_data['payment_request_id'];
-        $transaction_id     = $get_data['payment_id'];
-        $donation_id        = Helpers::get_donation_id_by_meta( 'MG_instamojo_for_give_payment_request_id', $payment_request_id );
-
-        $response      = Instamojo::get_payment_details( $payment_request_id, $transaction_id );
-        $response_body = json_decode( wp_remote_retrieve_body( $response ) );
-        $response_code = json_decode( wp_remote_retrieve_response_code( $response ) );
-
-        if ( 200 === $response_code && 'Completed' === $response_body->payment_request->status ) {
-            // Update donation status to `Complete`.
-			give_update_payment_status( $donation_id, 'publish' );
-
-			// Link `Transaction ID` to the donation.
-            give_set_payment_transaction_id( $donation_id, $transaction_id );
-
-			// Send donor to `Donation Confirmation` page.
-			give_send_to_success_page();
-        } else {
-			// Update donation status to `Failed`.
-            give_update_payment_status( $donation_id, 'failed' );
-
-			// Set Donation Note.
-			give_insert_payment_note( $donation_id, esc_html__( 'Donation didn\'t go through as the payment with Instamojo has failed.') );
-
-			// Redirect to `Donation Failed` page as payment didn't go through.
+    private function handle_return() {
+        $request_id = isset( $_GET['payment_request_id'] ) ? (string) $_GET['payment_request_id'] : '';
+        $payment_id = isset( $_GET['payment_id'] ) ? (string) $_GET['payment_id'] : '';
+        $result = $this->reconcile( $request_id, $payment_id );
+        if ( 'complete' === $result ) {
+            give_send_to_success_page();
+        } elseif ( 'failed' === $result ) {
             wp_redirect( give_get_failed_transaction_uri() );
+        } else {
+            // Keep an unverified donation pending and give the donor an accurate result.
+            wp_die( esc_html__( 'Your Instamojo payment is pending verification. Please contact the site administrator before attempting another donation.', 'instamojo-for-give' ) );
         }
+    }
+
+    private function handle_webhook() {
+        // MAC is defined over the original submitted values, before sanitization.
+        $data = wp_unslash( $_POST );
+        if ( ! is_array( $data ) || ! isset( $data['payment_request_id'], $data['payment_id'], $data['mac'] ) || ! is_scalar( $data['payment_request_id'] ) || ! is_scalar( $data['payment_id'] ) ) {
+            wp_die( '', '', array( 'response' => 400 ) );
+        }
+        $request_id = (string) $data['payment_request_id'];
+        $donation_id = Helpers::get_donation_id_by_meta( 'MG_instamojo_for_give_payment_request_id', $request_id );
+        if ( ! $donation_id || 'instamojo_checkout' !== give_get_payment_gateway( $donation_id ) ) {
+            wp_die( '', '', array( 'response' => 404 ) );
+        }
+        $version = ApiSelection::for_donation( $donation_id );
+        $environment = ApiSelection::environment_for_donation( $donation_id );
+        if ( '' === $environment ) {
+            wp_die( '', '', array( 'response' => 503 ) );
+        }
+        $key = 'v2' === $version ? 'mg_instamojo_v2_' . $environment . '_webhook_salt' : 'instamojo_get_' . $environment . '_salt';
+        $salt = trim( (string) give_get_option( $key ) );
+        if ( '' === $salt || ! is_string( $data['mac'] ) ) {
+            wp_die( '', '', array( 'response' => 503 ) );
+        }
+        $mac = $data['mac'];
+        unset( $data['mac'] );
+        if ( ! self::verify_webhook_mac( $data, $mac, $salt ) ) {
+            wp_die( '', '', array( 'response' => 403 ) );
+        }
+        $result = $this->reconcile( $request_id, (string) $data['payment_id'], $donation_id );
+        wp_die( '', '', array( 'response' => '' === $result ? 503 : 200 ) );
+    }
+
+    public static function verify_webhook_mac( $data, $mac, $salt ) {
+        if ( ! is_array( $data ) || ! is_string( $mac ) || '' === $salt ) {
+            return false;
+        }
+        uksort( $data, 'strcasecmp' );
+        foreach ( $data as $value ) {
+            if ( ! is_scalar( $value ) ) {
+                return false;
+            }
+        }
+        return hash_equals( hash_hmac( 'sha1', implode( '|', array_values( $data ) ), $salt ), $mac );
+    }
+
+    /** Verify against the stored API and donation before mutating payment state. */
+    private function reconcile( $request_id, $payment_id, $donation_id = 0 ) {
+        if ( '' === $request_id || '' === $payment_id || ! preg_match( '/^[A-Za-z0-9_-]+$/', $payment_id ) ) {
+            return '';
+        }
+        if ( ! $donation_id ) {
+            $donation_id = Helpers::get_donation_id_by_meta( 'MG_instamojo_for_give_payment_request_id', $request_id );
+        }
+        if ( ! $donation_id || 'instamojo_checkout' !== give_get_payment_gateway( $donation_id ) ) {
+            return '';
+        }
+        if ( (string) give_get_meta( $donation_id, 'MG_instamojo_for_give_payment_request_id', true ) !== $request_id ) {
+            return '';
+        }
+        $environment = ApiSelection::environment_for_donation( $donation_id );
+        if ( '' === $environment ) {
+            return '';
+        }
+        $version = ApiSelection::for_donation( $donation_id );
+        $client = new ApiClient( $version, $environment );
+        $saved_fingerprint = (string) give_get_meta( $donation_id, 'MG_instamojo_for_give_account_fingerprint', true );
+        if ( '' !== $saved_fingerprint && ! hash_equals( $saved_fingerprint, $client->account_fingerprint() ) ) {
+            return '';
+        }
+        $payment = $client->parse_payment( $client->payment( $payment_id ) );
+        if ( ! $payment ) {
+            return '';
+        }
+        $id_key = 'v2' === $version ? 'id' : 'payment_id';
+        $provider_id = isset( $payment[ $id_key ] ) ? (string) $payment[ $id_key ] : '';
+        $provider_request = isset( $payment['payment_request'] ) ? $payment['payment_request'] : '';
+        if ( is_array( $provider_request ) ) {
+            $provider_request = isset( $provider_request['id'] ) ? $provider_request['id'] : '';
+        }
+        if ( is_string( $provider_request ) && false !== strpos( $provider_request, '/' ) ) {
+            $provider_request = basename( rtrim( $provider_request, '/' ) );
+        }
+        if ( $provider_id !== $payment_id || (string) $provider_request !== $request_id || ! isset( $payment['amount'], $payment['currency'] ) || ! is_numeric( $payment['amount'] ) || ! is_string( $payment['currency'] ) ) {
+            return '';
+        }
+        $expected_amount = (float) give_get_payment_amount( $donation_id );
+        if ( $expected_amount <= 0 || abs( (float) $payment['amount'] - $expected_amount ) > 0.001 || strtoupper( (string) $payment['currency'] ) !== strtoupper( (string) give_get_payment_currency_code( $donation_id ) ) ) {
+            return '';
+        }
+        $current = give_get_payment_status( $donation_id );
+        $existing_transaction = (string) give_get_meta( $donation_id, '_give_payment_transaction_id', true );
+        if ( '' !== $existing_transaction && $existing_transaction !== $payment_id ) {
+            return '';
+        }
+        $transaction_owners = give_get_payments( array(
+            'number' => 2,
+            'status' => 'any',
+            'output' => 'posts',
+            'meta_query' => array( array( 'key' => '_give_payment_transaction_id', 'value' => $payment_id, 'compare' => '=' ) ),
+        ) );
+        foreach ( $transaction_owners as $owner ) {
+            if ( isset( $owner->ID ) && (int) $owner->ID !== (int) $donation_id ) {
+                return '';
+            }
+        }
+        $status = isset( $payment['status'] ) ? $payment['status'] : null;
+        $success = 'v2' === $version ? true === $status : 'Credit' === $status;
+        $failure = 'v2' === $version ? false === $status : 'Failed' === $status;
+        if ( $success ) {
+            if ( 'publish' !== $current && 'complete' !== $current ) {
+                if ( 'pending' !== $current && 'failed' !== $current ) {
+                    return '';
+                }
+                give_set_payment_transaction_id( $donation_id, $payment_id );
+                give_update_payment_status( $donation_id, 'publish' );
+            }
+            return 'complete';
+        }
+        if ( $failure ) {
+            if ( 'publish' === $current || 'complete' === $current ) {
+                return 'complete';
+            }
+            if ( 'pending' === $current ) {
+                give_update_payment_status( $donation_id, 'failed' );
+            }
+            return 'failed';
+        }
+        return '';
     }
 }

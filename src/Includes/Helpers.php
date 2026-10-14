@@ -115,28 +115,27 @@ class Helpers {
      * @return int
      */
     public static function get_donation_id_by_meta( $key, $value ) {
-        global $wpdb;
-
-        $meta_table = __give_v20_bc_table_details( 'payment' );
-
-        $result = $wpdb->get_var(
-            $wpdb->prepare(
-                "
-                    SELECT {$meta_table['column']['id']}
-                    FROM {$meta_table['name']}
-                    WHERE meta_key = '{$key}'
-                    AND meta_value = %s
-                    ORDER BY {$meta_table['column']['id']} DESC
-                    LIMIT 1
-                    ",
-                $value
-            )
-        );
-
-        if ( $result != null ) {
-            return $result;
+        if ( ! function_exists( 'give_get_payments' ) || '' === $key || '' === $value ) {
+            return 0;
         }
 
-        return 0;
+        $payments = give_get_payments(
+            [
+                'number'     => 1,
+                'orderby'    => 'ID',
+                'order'      => 'DESC',
+                'status'     => 'any',
+                'output'     => 'posts',
+                'meta_query' => [
+                    [
+                        'key'     => $key,
+                        'value'   => $value,
+                        'compare' => '=',
+                    ],
+                ],
+            ]
+        );
+
+        return isset( $payments[0]->ID ) ? (int) $payments[0]->ID : 0;
     }
 }

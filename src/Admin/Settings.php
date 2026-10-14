@@ -26,9 +26,21 @@ class Settings {
 	 * @return void
 	 */
 	public function __construct() {
+		add_action( 'admin_notices', [ $this, 'legacy_api_notice' ] );
 		add_action( 'give_admin_field_cta_notice', [ $this, 'render_cta_notice' ], 10, 2 );
 		add_filter( 'give_get_sections_gateways', [ $this, 'register_sections' ] );
 		add_filter( 'give_get_settings_gateways', [ $this, 'register_settings' ] );
+	}
+
+	/** Show migration guidance only on this gateway's settings screen. */
+	public function legacy_api_notice() {
+		if ( ! isset( $_GET['page'], $_GET['tab'], $_GET['section'] ) || 'give-settings' !== $_GET['page'] || 'gateways' !== $_GET['tab'] || 'instamojo' !== $_GET['section'] ) {
+			return;
+		}
+		if ( '1.1' !== \MG\Instamojo\GiveWP\Includes\ApiSelection::for_new_donation() ) {
+			return;
+		}
+		echo '<div class="notice notice-warning"><p>' . esc_html__( 'Instamojo API v1.1 is retained for existing sites and is planned for deprecation in plugin 1.2.0. To migrate new donations, add the v2 OAuth client ID, client secret and webhook salt for each environment you use, then explicitly select API v2 below. Pending v1.1 donations continue to use their original API.', 'instamojo-for-give' ) . '</p></div>';
 	}
 
 	/**
@@ -104,6 +116,14 @@ class Settings {
 						'id'   => 'give_title_gateway_settings_instamojo_start',
 					],
 					[
+						'name' => esc_html__( 'API for new donations', 'instamojo-for-give' ),
+						'desc' => esc_html__( 'Existing sites with configured v1.1 credentials stay on v1.1 until you explicitly choose v2. Fresh sites use v2.', 'instamojo-for-give' ),
+						'id' => 'mg_instamojo_api_version',
+						'type' => 'select',
+						'default' => \MG\Instamojo\GiveWP\Includes\ApiSelection::for_new_donation(),
+						'options' => [ '1.1' => 'API v1.1', 'v2' => 'API v2' ],
+					],
+					[
 						'type'  => 'cta_notice',
 						'id'    => 'give_title_gateway_settings_instamojo_start',
 						'name'  => esc_html__( 'Need Help?', 'instamojo-for-give' ),
@@ -173,6 +193,36 @@ class Settings {
 						'id'      => 'instamojo_get_test_salt',
 						'type'    => 'text',
 						'default' => '',
+					],
+					[
+						'name' => esc_html__( 'v2 Live - OAuth Client ID', 'instamojo-for-give' ),
+						'id' => 'mg_instamojo_v2_live_client_id',
+						'type' => 'text',
+					],
+					[
+						'name' => esc_html__( 'v2 Live - OAuth Client Secret', 'instamojo-for-give' ),
+						'id' => 'mg_instamojo_v2_live_client_secret',
+						'type' => 'text',
+					],
+					[
+						'name' => esc_html__( 'v2 Live - Webhook Salt', 'instamojo-for-give' ),
+						'id' => 'mg_instamojo_v2_live_webhook_salt',
+						'type' => 'text',
+					],
+					[
+						'name' => esc_html__( 'v2 Test - OAuth Client ID', 'instamojo-for-give' ),
+						'id' => 'mg_instamojo_v2_test_client_id',
+						'type' => 'text',
+					],
+					[
+						'name' => esc_html__( 'v2 Test - OAuth Client Secret', 'instamojo-for-give' ),
+						'id' => 'mg_instamojo_v2_test_client_secret',
+						'type' => 'text',
+					],
+					[
+						'name' => esc_html__( 'v2 Test - Webhook Salt', 'instamojo-for-give' ),
+						'id' => 'mg_instamojo_v2_test_webhook_salt',
+						'type' => 'text',
 					],
 					[
 						'name'    => esc_html__( 'Collect Billing Address', 'instamojo-for-give' ),

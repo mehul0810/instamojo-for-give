@@ -66,4 +66,8 @@ Yes. It does support GiveWP fee recovery addon
 Initial release.
 
 == Upgrade Notice ==
+= Planned API v1.1 deprecation in 1.2.0 =
+
+Existing configured sites continue to use Instamojo API v1.1 in the 1.1.0 development plan. Fresh sites use API v2. Migration requires separate v2 OAuth credentials and an explicit API selection in GiveWP gateway settings. Pending legacy donations continue to be checked with API v1.1. Deprecation in 1.2.0 is a plan, not an announced removal date or a provider sunset date.
+
 Please make sure you make a backup of your database before updating any version to ensure that none of your data is lost.

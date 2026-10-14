@@ -31,6 +31,7 @@ final class Plugin {
 
 		// Register services used throughout the plugin.
 		add_action( 'plugins_loaded', [ $this, 'register_services' ] );
+		add_action( 'givewp_register_payment_gateway', [ $this, 'register_modern_gateway' ] );
 
 		// Load text domain.
 		add_action( 'init', [ $this, 'load_plugin_textdomain' ] );
@@ -55,6 +56,12 @@ final class Plugin {
 		// Load Frontend Files.
 		new Includes\Actions();
 		new Includes\Filters();
+	}
+
+	public function register_modern_gateway( $registrar ) {
+		if ( class_exists( '\\Give\\Framework\\PaymentGateways\\PaymentGateway' ) && ! $registrar->hasPaymentGateway( 'instamojo_checkout' ) ) {
+			$registrar->registerGateway( Includes\ModernGateway::class );
+		}
 	}
 
 	/**

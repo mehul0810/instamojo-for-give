@@ -1,0 +1,33 @@
+name: Mocked regression checks
+
+'on':
+  pull_request:
+  push:
+    branches: [ develop, 'release/1.1.0' ]
+
+jobs:
+  php:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [ '5.6', '8.1', '8.3' ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+      - run: php -l src/Includes/Actions.php
+      - run: php -l src/Includes/ApiClient.php
+      - run: php -l src/Includes/ApiSelection.php
+      - run: php -l src/Plugin.php
+      - run: php -l src/Admin/Settings.php
+      - if: matrix.php != '5.6'
+        run: php -l src/Includes/ModernGateway.php
+      - run: php tests/required-fields.php
+      - run: php tests/legacy-contracts.php
+      - run: php tests/payment-lookup.php
+      - run: php tests/payment-flows.php
+      - run: php tests/api-client.php
+      - run: php tests/modern-loading-legacy.php
+      - if: matrix.php != '5.6'
+        run: php tests/modern-gateway.php

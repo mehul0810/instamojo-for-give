@@ -9,8 +9,6 @@
 
 namespace MG\Instamojo\GiveWP\Includes;
 
-use MG\Instamojo\GiveWP\Includes\Helpers as Helpers;
-
 // Bailout, if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
     wp_die( 'Cheating Huh?' );
@@ -21,19 +19,19 @@ class Instamojo {
      * Create Payment Request.
      *
      * @param array $data Data to send.
+     * @param string|null $version Explicit API for a stored donation, when known.
+     * @param string|null $environment Explicit stored environment, when known.
      *
      * @since  1.0.0
      * @access public
      *
      * @return object
      */
-    public static function create_payment_request( $data ) {
-        $url  = Helpers::get_api_endpoint() . 'payment_requests/';
-        $args = [
-            'headers' => Helpers::get_headers(),
-            'body'    => $data,
-        ];
-        return wp_remote_post( $url, $args );
+    public static function create_payment_request( $data, $version = null, $environment = null ) {
+        $version = null === $version ? ApiSelection::for_new_donation() : $version;
+        $environment = null === $environment ? ( give_is_test_mode() ? 'test' : 'live' ) : $environment;
+        $client = new ApiClient( $version, $environment );
+        return $client->create( $data );
     }
 
     /**
@@ -41,20 +39,18 @@ class Instamojo {
      *
      * @param string $payment_request_id Payment Request ID.
      * @param string $payment_id Payment ID.
+     * @param string|null $version Explicit API for a stored donation, when known.
+     * @param string|null $environment Explicit stored environment, when known.
      *
      * @since  1.0.0
      * @access public
      *
      * @return object
      */
-    public static function get_payment_details( $payment_request_id, $payment_id ) {
-        $endpoint = Helpers::get_api_endpoint();
-        $url      = "{$endpoint}payment-requests/{$payment_request_id}/{$payment_id}";
-        $args     = [
-            'headers' => Helpers::get_headers(),
-        ];
-
-        // Decode JSON encoded response.
-        return wp_remote_get( $url, $args );
+    public static function get_payment_details( $payment_request_id, $payment_id, $version = null, $environment = null ) {
+        $version = null === $version ? ApiSelection::for_new_donation() : $version;
+        $environment = null === $environment ? ( give_is_test_mode() ? 'test' : 'live' ) : $environment;
+        $client = new ApiClient( $version, $environment );
+        return $client->payment( $payment_id );
     }
 }
