@@ -46,4 +46,37 @@ instamojo_check( 'test' === MG\Instamojo\GiveWP\Includes\ApiSelection::environme
 instamojo_check( (int) $donation_id === (int) MG\Instamojo\GiveWP\Includes\Helpers::get_donation_id_by_meta( 'MG_instamojo_for_give_payment_request_id', 'synthetic-request' ), 'Historical donation lookup failed.' );
 instamojo_check( 'instamojo_checkout' === give_get_payment_gateway( $donation_id ), 'Gateway ID changed.' );
 instamojo_check( 'pending' === give_get_payment_status( $donation_id ), 'Synthetic donation status changed.' );
-echo 'WordPress/GiveWP PHP 5.6 integration passed. Donation ' . $donation_id . " remained pending.\n";
+
+// Intercept every outbound WordPress HTTP request. The payment result is entirely synthetic.
+$GLOBALS['synthetic_payment_request'] = 'wrong-request';
+$GLOBALS['synthetic_provider_calls'] = 0;
+add_filter( 'pre_http_request', function ( $pre, $args, $url ) {
+    if ( 'https://test.instamojo.com/api/1.1/payments/synthetic-payment' !== $url ) {
+        throw new Exception( 'Unexpected outbound request: ' . $url );
+    }
+    $GLOBALS['synthetic_provider_calls']++;
+    return array(
+        'headers' => array(),
+        'body' => wp_json_encode( array( 'payment' => array(
+            'payment_id' => 'synthetic-payment',
+            'payment_request' => $GLOBALS['synthetic_payment_request'],
+            'amount' => '10.00',
+            'currency' => 'INR',
+            'status' => 'Credit',
+        ) ) ),
+        'response' => array( 'code' => 200, 'message' => 'OK' ),
+        'cookies' => array(),
+    );
+}, 10, 3 );
+$actions = new MG\Instamojo\GiveWP\Includes\Actions();
+$method = new ReflectionMethod( $actions, 'reconcile' );
+$method->setAccessible( true );
+instamojo_check( '' === $method->invoke( $actions, 'synthetic-request', 'synthetic-payment', $donation_id ), 'Mismatched provider request was accepted.' );
+instamojo_check( 'pending' === give_get_payment_status( $donation_id ), 'Mismatched provider request changed status.' );
+$GLOBALS['synthetic_payment_request'] = 'synthetic-request';
+instamojo_check( 'complete' === $method->invoke( $actions, 'synthetic-request', 'synthetic-payment', $donation_id ), 'Verified synthetic payment did not reconcile.' );
+instamojo_check( 'publish' === give_get_payment_status( $donation_id ), 'Verified synthetic payment did not complete donation.' );
+instamojo_check( 'synthetic-payment' === give_get_payment_transaction_id( $donation_id ), 'Verified synthetic transaction was not stored.' );
+instamojo_check( 'complete' === $method->invoke( $actions, 'synthetic-request', 'synthetic-payment', $donation_id ), 'Repeated callback was not idempotent.' );
+instamojo_check( 3 === $GLOBALS['synthetic_provider_calls'], 'Unexpected provider lookup count.' );
+echo 'WordPress/GiveWP PHP 5.6 integration passed. Donation ' . $donation_id . " completed only after mocked verification.\n";
