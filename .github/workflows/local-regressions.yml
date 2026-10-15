@@ -31,3 +31,37 @@ jobs:
       - run: php tests/modern-loading-legacy.php
       - if: matrix.php != '5.6'
         run: php tests/modern-gateway.php
+
+  legacy-wordpress:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '5.6'
+          extensions: mysqli, mbstring, zip
+          tools: composer:v2.2
+      - name: Install isolated compatible WordPress and GiveWP
+        run: |
+          curl -fsSL https://github.com/wp-cli/wp-cli/releases/download/v2.7.1/wp-cli-2.7.1.phar -o /tmp/wp-cli.phar
+          php /tmp/wp-cli.phar core download --version=5.9.3 --path=/tmp/instamojo-wp56
+          php /tmp/wp-cli.phar core config --path=/tmp/instamojo-wp56 --dbname=wordpress --dbuser=root --dbpass=root --dbhost=127.0.0.1
+          php /tmp/wp-cli.phar core install --path=/tmp/instamojo-wp56 --url=http://localhost --title='Disposable compatibility fixture' --admin_user=fixture --admin_password=synthetic-only --admin_email=fixture@example.test
+          php /tmp/wp-cli.phar plugin install give --version=2.19.2 --activate --path=/tmp/instamojo-wp56
+          mkdir -p /tmp/instamojo-wp56/wp-content/plugins/instamojo-for-give
+          tar --exclude=.git --exclude=tests --exclude=docs --exclude=.github -cf - . | tar -xf - -C /tmp/instamojo-wp56/wp-content/plugins/instamojo-for-give
+          composer install --working-dir=/tmp/instamojo-wp56/wp-content/plugins/instamojo-for-give --no-dev --no-scripts --no-interaction --no-progress
+          php /tmp/wp-cli.phar plugin activate instamojo-for-give --path=/tmp/instamojo-wp56
+      - name: Exercise legacy gateway in real WordPress and GiveWP
+        run: php /tmp/wp-cli.phar eval-file "$GITHUB_WORKSPACE/tests/wp-php56-integration.php" --path=/tmp/instamojo-wp56
